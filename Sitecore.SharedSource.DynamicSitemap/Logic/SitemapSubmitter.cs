@@ -9,6 +9,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Web;
+using System.Linq;
 
 namespace Sitecore.SharedSource.DynamicSitemap.Logic
 {
@@ -36,7 +37,7 @@ namespace Sitecore.SharedSource.DynamicSitemap.Logic
         /// Sitemap index
         /// </summary>
         protected SitemapIndexConfiguration SitemapIndex { get; set; }
-
+        protected String _sitemapIndexFileName = "sitemap.xml";
         protected List<SubmissionUrlsConfig> SubmissionUrlsConfig { get; set; }
 
         public SitemapSubmitter(DynamicSitemapSitecoreConfiguration config, List<SitemapSiteConfiguration> siteConfigurations, Database database)
@@ -54,6 +55,13 @@ namespace Sitecore.SharedSource.DynamicSitemap.Logic
             if (DynamicSitemapConfiguration.UseSitemapsIndexFile)
             {
                 var submissionConfig = new SubmissionUrlsConfig();
+
+                SitemapIndex = new SitemapIndexConfiguration();
+                SitemapIndex.ServerHost = SitecoreConfiguration.MainSiteConfiguration != null
+                    ? SitecoreConfiguration.MainSiteConfiguration.ServerHost
+                    : SiteConfigurations.FirstOrDefault().ServerHost;
+                SitemapIndex.FileName = _sitemapIndexFileName;
+
                 submissionConfig.SitemapUrl = SitemapIndex.Url;
 
                 foreach (var searchEngineId in SitecoreConfiguration.SearchEngines)
